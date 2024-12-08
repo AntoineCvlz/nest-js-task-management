@@ -3,15 +3,25 @@ import { DataSource, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksRepository extends Repository<Task> {
   constructor(private readonly dataSource: DataSource) {
     super(Task, dataSource.createEntityManager());
   }
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    const task = this.create(createTaskDto);
-    return await this.save(task);
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    const { title, description, status } = createTaskDto;
+
+    const task = this.create({
+      title,
+      description,
+      status,
+      user
+    });
+
+    await this.save(task)
+    return task;
   }
 
   async findTasks(filterDto: FilterTasksDto): Promise<Task[]> {
