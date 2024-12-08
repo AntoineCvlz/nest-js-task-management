@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { User } from 'src/auth/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -22,5 +23,6 @@ export class Task {
   createdAt: Date;
 
   @ManyToOne( (type) => User, (user) => user.tasks, { eager: false })
+  @Exclude({ toPlainOnly: true })
   user: User;
 }
