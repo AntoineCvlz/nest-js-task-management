@@ -20,8 +20,8 @@ export class TasksService {
     return this.tasksRepository.findTasks(filterDto, user);
   }
 
-  async findTaskById(id: string): Promise<Task> {
-    const task = await this.tasksRepository.findTaskById(id);
+  async findTaskById(id: string, user: User): Promise<Task> {
+    const task = await this.tasksRepository.findTaskById(id, user);
 
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
@@ -30,23 +30,23 @@ export class TasksService {
     return task;
   }
 
-  async updateTask(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    const task = await this.findTaskById(id);
+  async updateTask(id: string, updateTaskDto: UpdateTaskDto, user: User): Promise<Task> {
+    const task = await this.findTaskById(id, user);
     Object.assign(task, updateTaskDto);
-    return this.tasksRepository.updateTask(task);
+    return this.tasksRepository.updateTask(task, user);
   }
 
-  async updateTaskStatus(id: string, status: string): Promise<Task> {
-    const task = await this.findTaskById(id);
+  async updateTaskStatus(id: string, status: string, user: User): Promise<Task> {
+    const task = await this.findTaskById(id, user);
     task.status = status;
     await this.tasksRepository.save(task);
 
     return task;
   }
 
-  async deleteTask(id: string): Promise<void> {
-    const task = await this.findTaskById(id);
-    const isDeleted = await this.tasksRepository.deleteTaskById(id);
+  async deleteTask(id: string, user: User): Promise<void> {
+    const task = await this.findTaskById(id, user);
+    const isDeleted = await this.tasksRepository.deleteTaskById(id, user);
 
     if (!isDeleted) {
         throw new NotFoundException(`Task with ID ${id} could not be deleted`);
